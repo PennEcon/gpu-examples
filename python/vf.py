@@ -5,10 +5,10 @@ import numpy as np
 
 # Example script for GPU computations in python.
 
-N = 1024						# Number of threads to run.
+N = 1024						# number of threads to run.
 
 print "Compiling kernel..."
-mod = SourceModule(open("kernel.c").read())		# Compile the kernel, the C code 
+mod = SourceModule(open("kernel.c").read())		# compile the kernel, the C code 
 							# which will be run on each thread.
 
 ## Allocate memory on the GPU.
@@ -31,7 +31,7 @@ cuda.memcpy_htod(p_gpu, p)				# policy function
 cuda.memcpy_htod(kd_gpu, kd)				# capital domain
 cuda.memcpy_htod(dist_gpu, dist)			# distance between value functions
 
-func = mod.get_function("upd")				# Get a	handle for the kernel function to run.
+func = mod.get_function("upd")				# get a	handle for the kernel function to run.
 
 ## Run value function iteration
 
@@ -42,13 +42,13 @@ while(True):
 	# Execute the kernel function. The results are written into the memory
 	# pointed at by v_gpu.
 	func(v_gpu, p_gpu, kd_gpu, dist_gpu, block = (N, 1, 1), grid = (1, 1))
-	cuda.memcpy_dtoh(dist_out, dist_gpu)		# Copy the 'distance' vector from 
+	cuda.memcpy_dtoh(dist_out, dist_gpu)		# copy the 'distance' vector from 
 							# the GPU to the CPU.
-	print "\rDistance: " + str(max(dist_out)),	# Check	the distance criterion.
+	print "\rDistance: " + str(max(dist_out)),	# check	the distance criterion.
 	if max(dist_out) < 0.1:
 		break
 
 
-v_out = np.empty_like(v)	# Store the value function on the CPU here.
-cuda.memcpy_dtoh(v_out, v_gpu)	# Copy the value function to memory.
-				# Result is in v_out.
+v_out = np.empty_like(v)	# store the value function on the CPU here.
+cuda.memcpy_dtoh(v_out, v_gpu)	# copy the value function to memory.
+				# result is in v_out.
