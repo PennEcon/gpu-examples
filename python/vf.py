@@ -2,6 +2,7 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 from pycuda.compiler import SourceModule
 import numpy as np
+import timeit
 
 # Example script for GPU computations in python.
 
@@ -22,7 +23,7 @@ dist_gpu = cuda.mem_alloc(N * np.float32(0).nbytes)	# distance between value fun
 # Allocate the corresponding objects on the CPU.
 v = np.zeros(N).astype(np.float32)			# value function
 p = np.zeros(N).astype(np.int32)			# policy function
-kd = np.linspace(1, 100, num = N).astype(np.float32)	# capital domain
+kd = np.linspace(0.1, 50, num = N).astype(np.float32)	# capital domain
 dist = np.zeros(N).astype(np.float32)			# distance between value functions
 
 # Copy the CPU objects over to the GPU objects
@@ -36,19 +37,37 @@ func = mod.get_function("upd")				# get a	handle for the kernel function to run.
 ## Run value function iteration
 
 print "Value function iteration..."
+iter = 0
 dist_out = np.empty_like(dist)  # Store the distance between successive
 				# value functions here on the CPU.
+
+b = input('Number of threads? (Enter 1 or 1024) ')
+
+# Start the timer
+start = timeit.timeit()
+
 while(True):
 	# Execute the kernel function. The results are written into the memory
 	# pointed at by v_gpu.
-	func(v_gpu, p_gpu, kd_gpu, dist_gpu, block = (N, 1, 1), grid = (1, 1))
+	func(v_gpu, p_gpu, kd_gpu, dist_gpu, block = (int(b), 1, 1), grid = (1024/int(b), 1))
 	cuda.memcpy_dtoh(dist_out, dist_gpu)		# copy the 'distance' vector from 
 							# the GPU to the CPU.
 	print "\rDistance: " + str(max(dist_out)),	# check	the distance criterion.
 	if max(dist_out) < 0.1:
 		break
-
+	iter = iter + 1
 
 v_out = np.empty_like(v)	# store the value function on the CPU here.
 cuda.memcpy_dtoh(v_out, v_gpu)	# copy the value function to memory.
 				# result is in v_out.
+
+# End the timer
+end = timeit.timeit()
+
+print 
+print "Total iterations: "
+print iter
+print "Time elapsed: "
+print end - start
+
+
