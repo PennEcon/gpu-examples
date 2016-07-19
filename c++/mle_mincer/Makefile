@@ -38,7 +38,10 @@ INC_PARAMS=$(foreach d, $(INC), -I$d)
 
 #4. Lnlopt library 
 LNLOPT=-L$(HOME)install/lib/ -lnlopt
+#-------------------------------------
 
+#5. Tesla arch. 
+TESLARCH=-O2 -arch=sm_20
 
 
 
