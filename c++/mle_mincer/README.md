@@ -12,6 +12,8 @@ libraries, as well as the [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt_
 ```
 ## MLE
 make parallelrun
+make clean
+
 
 # install NLopt locally
 wget http://ab-initio.mit.edu/nlopt/nlopt-2.4.2.tar.gz
