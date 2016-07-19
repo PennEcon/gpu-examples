@@ -9,27 +9,19 @@ for instructions on compiling gcc locally on tesla.
 You also need to install [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt_Installation)
 libraries, as well as the  optimization library:
 
-The code estimates a basic Mincer equation with fake data. 
 
 ```
-## MLE
-make parallelrun
-
-
 # install NLopt locally
 make nloptinst
 
-
-# clean up
-make clean
 ```
 
-The code will generate a csv file called PARAMETERSFOUND.csv with the ML estimates. 
+
 
 ## Run the example
 
 Compile and run the example with
 ```
-make
-./main
+make parallelrun
 ```
+The code will generate a csv file called PARAMETERSFOUND.csv with the ML estimates.  The output of the file compiled will be stored in nohupPARALLR.out
